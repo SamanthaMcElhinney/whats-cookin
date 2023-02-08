@@ -4,7 +4,7 @@ class RecipeRepository {
   constructor(recipeData) {
     this.recipes = recipeData.map(recipe => new Recipe(recipe));
     this.filteredRecipes;
-  }//.
+  }
   filterByTag(tag) {
     if (!tag) {
       return;

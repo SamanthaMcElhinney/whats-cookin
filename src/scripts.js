@@ -26,7 +26,6 @@ snacksAppFilter.addEventListener('click', function() {showFilteredRecipes('snack
 brunchFilter.addEventListener('click', function() {showFilteredRecipes('brunch')})
 mainDishFilter.addEventListener('click', function() {showFilteredRecipes('main dish')})
 compDishFilter.addEventListener('click', function() {showFilteredRecipes('appetizer')})
-//.
 var currentRecipes = []
 
 window.onload = function() {

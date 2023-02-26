@@ -254,7 +254,7 @@ function loadPage(recipeRepository, user, ingredientsData) {
             }
             return response.json()
            })
-           .catch(error => alert(error))
+           .catch(error => alert('Error, unable to locate the users recipes API'))
         
             user.removeFromSavedRecipes(currentRecipe)
             button.innerText = '♥️'

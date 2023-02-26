@@ -269,9 +269,9 @@ function loadPage(recipeRepository, user, ingredientsData) {
         adminSection.innerHTML += 
         `
         <label>Username : </label>   
-            <input class="user" type="text" placeholder="Enter Username" name="username" required>  
+            <input id="login-style" class="user" type="text" placeholder="Enter Username" name="username" required>  
             <label>Password : </label>   
-            <input class="password" type="password" placeholder="Enter Password" name="password" required>  
+            <input id="login-style" class="password" type="password" placeholder="Enter Password" name="password" required>  
         <button class="login-button" type="submit">Login</button>
         `
 
@@ -286,7 +286,7 @@ function loadPage(recipeRepository, user, ingredientsData) {
             }
             else{
                 loggedIn = false
-                adminSection.innerHTML += `<h1>Incorrect Username or Password</h1>`
+                adminSection.innerHTML += `<h1 class="login-error">Incorrect Username or Password</h1>`
                 setTimeout(() => {
                     displayAdmin()
                   }, "1500")

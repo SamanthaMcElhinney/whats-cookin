@@ -387,13 +387,26 @@ function loadPage(recipeRepository, user, ingredientsData) {
               getCurrentDisplayedRecipes(user.recipesToCook, filterTerm)
             );
         } else if (currentView === 'landing') {
-            const num1 = Math.floor(Math.random() * recipeRepository.recipes.length)
-            const num2 = Math.floor(Math.random() * recipeRepository.recipes.length)
-            const num3 = Math.floor(Math.random() * recipeRepository.recipes.length)
-            let fakePopularRecipes = [recipeRepository.recipes[num1], recipeRepository.recipes[num2], recipeRepository.recipes[num3]]
-            displayRecipes(fakePopularRecipes)
+            var popularRecipes = genPopularRecipes()
+            displayRecipes(popularRecipes)
         }
     }
+
+    function genPopularRecipes() {
+        const num1 = Math.floor(Math.random() * recipeRepository.recipes.length)
+        const num2 = Math.floor(Math.random() * recipeRepository.recipes.length)
+        const num3 = Math.floor(Math.random() * recipeRepository.recipes.length)
+
+        let popularRecipes = [recipeRepository.recipes[num1], recipeRepository.recipes[num2], recipeRepository.recipes[num3]]
+
+        if((new Set(popularRecipes)).size !== popularRecipes.length) {
+            genPopularRecipes()
+        } else {
+            return popularRecipes
+        }
+
+    }
+
 
     function checkLogin(username, password) {
         if(username === "admin" && password === "password"){ return true }

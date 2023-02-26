@@ -239,7 +239,7 @@ function loadPage(recipeRepository, user, ingredientsData) {
             }
             return response.json()
            })
-           .catch(error => alert(error))
+           .catch(error => alert('Error, issue with retrieving saved recipe data'))
         } else {
         fetch('http://localhost:3001/api/v1/usersRecipes', {
             method: 'DELETE',
@@ -254,7 +254,7 @@ function loadPage(recipeRepository, user, ingredientsData) {
             }
             return response.json()
            })
-           .catch(error => alert(error))
+           .catch(error => alert('Error, issue with retrieving saved recipe data'))
         
             user.removeFromSavedRecipes(currentRecipe)
             button.innerText = '♥️'

@@ -135,7 +135,7 @@ button:active {
 }
 
 ::placeholder {
-  color: var(--text-color);
+  color: var(--body-background-color);
 }
 
 .search-button {
@@ -205,10 +205,29 @@ button:active {
 .login-button {   
   background-color: var(--background-color);   
   width: 5%;    
-   margin: 10px 0px;   
-   border: none;   
-   cursor: pointer;   
+  margin: 10px 0px;   
+  border: none;   
+  cursor: pointer;   
 }   
+
+#login-style {
+  margin-top: 20vh;
+  font-family: inherit;
+  width: 25%;
+  border: 0;
+  border-bottom: 2px solid var(--background-color);
+  outline: 0;
+  font-size: 1.3rem;
+  color: var(--highlight-color);
+  padding: 7px 0;
+  background: transparent;
+  transition: border-color 0.2s;
+}
+
+.login-error {
+  margin-top: 5vh;
+  color: red;
+}
 
 #admin-items-container {
   flex-wrap: wrap;

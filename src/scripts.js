@@ -239,7 +239,7 @@ function loadPage(recipeRepository, user, ingredientsData) {
             }
             return response.json()
            })
-           .catch(error => alert(error))
+           .catch(error => alert('Error, unable to find the saved recipes API'))
         } else {
         fetch('http://localhost:3001/api/v1/usersRecipes', {
             method: 'DELETE',

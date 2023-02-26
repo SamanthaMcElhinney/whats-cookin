@@ -17,19 +17,19 @@ const recipesDataFetch = fetch(
 ).then((response) => response.json())
 
 Promise.all([usersDataFetch, ingredientsDataFetch, recipesDataFetch])
-.then((data) => {
-    let allCookingData = {
-        users: data[0].users,
-        ingredients: data[1].ingredients,
-        recipes: data[2].recipes
-    }
-    return allCookingData
-})
-.then(
-    (allCookingData) => {
+    .then((data) => {
+        let allCookingData = {
+            users: data[0].users,
+            ingredients: data[1].ingredients,
+            recipes: data[2].recipes
+        }
+        return allCookingData
+    })
+    .then(
+        (allCookingData) => {
             let recipeRepository = new RecipeRepository(allCookingData.recipes)
             let user = new User(allCookingData.users[10])
-            user.recipesToCook = user.changeIdToRecipe(recipeRepository);
+            user.recipesToCook = user.changeIdToRecipe(recipeRepository)
             loadPage(recipeRepository, user, allCookingData.ingredients)
         }
     )
@@ -52,7 +52,7 @@ function loadPage(recipeRepository, user, ingredientsData) {
     const searchForm = document.querySelector('#search-form')
 
     var clickRepo
-    let currentRecipe 
+    let currentRecipe
     var loggedIn = false
     let currentView = 'landing'
     let filterTerm = ''
@@ -61,7 +61,9 @@ function loadPage(recipeRepository, user, ingredientsData) {
 
     renderPage()
 
-    if(localStorage.length < 1){genClickRepo()}
+    if (localStorage.length < 1) {
+        genClickRepo()
+    }
 
     topButton.addEventListener('click', () => document.documentElement.scrollTop = 0)
     allRecipesButton.addEventListener('click', () => {
@@ -105,7 +107,7 @@ function loadPage(recipeRepository, user, ingredientsData) {
         if (searchBar.value) {
             filterTerm = searchBar.value
         }
-        if (currentView === 'admin' || currentView ==='landing') {
+        if (currentView === 'admin' || currentView === 'landing') {
             currentView = 'recipes'
         }
         renderPage()
@@ -149,15 +151,15 @@ function loadPage(recipeRepository, user, ingredientsData) {
     }
 
     function updateRecipeCount() {
-        currentRecipe.clicks += 1;
-      }
- 
+        currentRecipe.clicks += 1
+    }
+
     function renderCurrentRecipe() {
 
         if (!currentRecipe) {
             return
         }
-        let isSaved;
+        let isSaved
         recipeModal.innerHTML = ''
         let ingredients = currentRecipe.determineRecipeIngredients(ingredientsData)
 
@@ -165,7 +167,7 @@ function loadPage(recipeRepository, user, ingredientsData) {
             return '<li>' + ingredient.ingredient + '</li>'
         }).join('')
 
-        if ( user.recipesToCook && user.recipesToCook.recipes.filter(current => current.id === currentRecipe.id).length !== 0) {
+        if (user.recipesToCook && user.recipesToCook.recipes.filter(current => current.id === currentRecipe.id).length !== 0) {
             isSaved = "Saved"
         } else {
             isSaved = "♥️"
@@ -174,9 +176,9 @@ function loadPage(recipeRepository, user, ingredientsData) {
         const instructionsHTML = currentRecipe
             .returnInstructions()
             .map((instruction) => {
-                return "<li>" + instruction + "</li>";
+                return "<li>" + instruction + "</li>"
             })
-            .join("");
+            .join("")
         recipeModal.innerHTML = `
         <header class="modal__header">
           <h2 class="modal__title" id="modal-1-title">
@@ -205,20 +207,20 @@ function loadPage(recipeRepository, user, ingredientsData) {
           <button class="modal__close" id="close" aria-label="Close modal" data-micromodal-close>CLOSE</button>
           </div>
         </main>
-        `;
+        `
         MicroModal.show('modal-1')
         const saveButton = document.querySelector('.modal__btn')
         const closeButton = document.querySelector('#close')
         if (
-          user.recipesToCook.recipes.find(
-            (current) => current.id === currentRecipe.id
-          )
+            user.recipesToCook.recipes.find(
+                (current) => current.id === currentRecipe.id
+            )
         ) {
-          saveButton.style.backgroundColor = "red";
+            saveButton.style.backgroundColor = "red"
         }
         saveButton.addEventListener('click', () => saveRecipe(saveButton))
         closeButton.addEventListener('click', () => currentRecipe = '')
-        recipeModal.scrollTo(0,0) 
+        recipeModal.scrollTo(0, 0)
     }
 
     function saveRecipe(button) {
@@ -226,36 +228,42 @@ function loadPage(recipeRepository, user, ingredientsData) {
             user.addToSavedRecipes(currentRecipe)
             button.innerText = 'Saved'
             button.style.backgroundColor = "red"
-        fetch('http://localhost:3001/api/v1/usersRecipes', {
-            method: 'POST',
-            body: JSON.stringify({ userID: user.id, recipeID: currentRecipe.id}),
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        })
-        .then((response) => {
-            if (!response.ok) {
-              throw new Error('Issue with request: ', response.status);
-            }
-            return response.json()
-           })
-           .catch(error => alert('Error, unable to find the saved recipes API'))
+            fetch('http://localhost:3001/api/v1/usersRecipes', {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        userID: user.id,
+                        recipeID: currentRecipe.id
+                    }),
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then((response) => {
+                    if (!response.ok) {
+                        throw new Error('Issue with request: ', response.status)
+                    }
+                    return response.json()
+                })
+                .catch(error => alert('Error, unable to find the saved recipes API'))
         } else {
-        fetch('http://localhost:3001/api/v1/usersRecipes', {
-            method: 'DELETE',
-            headers: {
-                'Content-Type': 'application/json'
-              },
-            body: JSON.stringify({ userID: user.id, recipeID: currentRecipe.id})
-        })
-        .then((response) => {
-            if (!response.ok) {
-              throw new Error('Issue with request: ', response.status);
-            }
-            return response.json()
-           })
-           .catch(error => alert('Error, unable to locate the users recipes API'))
-        
+            fetch('http://localhost:3001/api/v1/usersRecipes', {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        userID: user.id,
+                        recipeID: currentRecipe.id
+                    })
+                })
+                .then((response) => {
+                    if (!response.ok) {
+                        throw new Error('Issue with request: ', response.status)
+                    }
+                    return response.json()
+                })
+                .catch(error => alert('Error, unable to locate the users recipes API'))
+
             user.removeFromSavedRecipes(currentRecipe)
             button.innerText = '♥️'
             button.style.backgroundColor = "#e6e6e6"
@@ -265,9 +273,9 @@ function loadPage(recipeRepository, user, ingredientsData) {
 
     function displayAdmin() {
         adminSection.innerHTML = ''
-        if(!loggedIn){
-        adminSection.innerHTML += 
-        `
+        if (!loggedIn) {
+            adminSection.innerHTML +=
+                `
         <label>Username : </label>   
             <input id="login-style" class="user" type="text" placeholder="Enter Username" name="username" required>  
             <label>Password : </label>   
@@ -275,28 +283,27 @@ function loadPage(recipeRepository, user, ingredientsData) {
         <button class="login-button" type="submit">Login</button>
         `
 
-        var login = document.querySelector('.login-button')
-        login.addEventListener('click', () => {
-            username = document.querySelector('.user').value
-            password = document.querySelector('.password').value
-            console.log(username)
-            if(checkLogin(username, password)) {
-                loggedIn = true 
-                displayAdmin()
-            }
-            else{
-                loggedIn = false
-                adminSection.innerHTML += `<h1 class="login-error">Incorrect Username or Password</h1>`
-                setTimeout(() => {
+            var login = document.querySelector('.login-button')
+            login.addEventListener('click', () => {
+                username = document.querySelector('.user').value
+                password = document.querySelector('.password').value
+                console.log(username)
+                if (checkLogin(username, password)) {
+                    loggedIn = true
                     displayAdmin()
-                  }, "1500")
-            }
-        }) 
+                } else {
+                    loggedIn = false
+                    adminSection.innerHTML += `<h1 class="login-error">Incorrect Username or Password</h1>`
+                    setTimeout(() => {
+                        displayAdmin()
+                    }, "1500")
+                }
+            })
         }
 
-        if(loggedIn) {
-        adminSection.innerHTML += 
-        `
+        if (loggedIn) {
+            adminSection.innerHTML +=
+                `
         <button id="clear-button">Clear Clicks</button>
         <div class="admin">
           <h2 class="admin-title">Hi Admin</h2>
@@ -306,19 +313,19 @@ function loadPage(recipeRepository, user, ingredientsData) {
             <ul class='admin-list'></ul>
         </div>
         `
-        var adminList = document.querySelector('.admin-list')
+            var adminList = document.querySelector('.admin-list')
 
-        var clicks = localStorage.getItem('clicks')
-        var click = JSON.parse(clicks)
-        click.sort((a, b)=> {
-           return b.clicks - a.clicks
-        })
-        click.forEach(clickCount=> {
-            adminList.innerHTML += `<li>${clickCount.name} has ${clickCount.clicks} click(s)</li>`
-        })
+            var clicks = localStorage.getItem('clicks')
+            var click = JSON.parse(clicks)
+            click.sort((a, b) => {
+                return b.clicks - a.clicks
+            })
+            click.forEach(clickCount => {
+                adminList.innerHTML += `<li>${clickCount.name} has ${clickCount.clicks} click(s)</li>`
+            })
 
-        const clearButton = document.querySelector('#clear-button')
-        clearButton.addEventListener('click', genClickRepo)
+            const clearButton = document.querySelector('#clear-button')
+            clearButton.addEventListener('click', genClickRepo)
         }
     }
 
@@ -333,7 +340,7 @@ function loadPage(recipeRepository, user, ingredientsData) {
             recipesHeader.innerText = 'Popular Recipes'
             recipes.forEach(recipe => {
                 recipeContainer.innerHTML +=
-            `
+                    `
             <section class='popular-recipe' data-all-recipes='${recipe.id}'>
             <h3 id='${recipe.id}' class='small-recipe-text'>${recipe.name}</h3>
             <img src="${recipe.image}" alt="${recipe.name}" class="recipe-img">
@@ -344,7 +351,7 @@ function loadPage(recipeRepository, user, ingredientsData) {
             recipeContainer.innerHTML = ''
             recipes.forEach(recipe => {
                 recipeContainer.innerHTML +=
-            `
+                    `
             <section class='recipe' data-all-recipes='${recipe.id}'>
             <h3 id='${recipe.id}' class='small-recipe-text'>${recipe.name}</h3>
             <img src="${recipe.image}" alt="${recipe.name}" class="recipe-img">
@@ -385,8 +392,8 @@ function loadPage(recipeRepository, user, ingredientsData) {
             adminSection.classList.add('hidden')
             recipeSection.classList.remove('hidden')
             displayRecipes(
-              getCurrentDisplayedRecipes(user.recipesToCook, filterTerm)
-            );
+                getCurrentDisplayedRecipes(user.recipesToCook, filterTerm)
+            )
         } else if (currentView === 'landing') {
             var popularRecipes = genPopularRecipes()
             displayRecipes(popularRecipes)
@@ -400,7 +407,7 @@ function loadPage(recipeRepository, user, ingredientsData) {
 
         let popularRecipes = [recipeRepository.recipes[num1], recipeRepository.recipes[num2], recipeRepository.recipes[num3]]
 
-        if((new Set(popularRecipes)).size !== popularRecipes.length) {
+        if ((new Set(popularRecipes)).size !== popularRecipes.length) {
             genPopularRecipes()
         } else {
             return popularRecipes
@@ -410,15 +417,20 @@ function loadPage(recipeRepository, user, ingredientsData) {
 
 
     function checkLogin(username, password) {
-        if(username === "admin" && password === "password"){ return true }
-        else{ return false} 
+        if (username === "admin" && password === "password") {
+            return true
+        } else {
+            return false
+        }
     }
 
     function updateClickCount() {
         clickRepo = localStorage.getItem('clicks')
         var par = JSON.parse(clickRepo)
         par.forEach(recipe => {
-            if(recipe.name[0] === currentRecipe.name){recipe.clicks += 1}
+            if (recipe.name[0] === currentRecipe.name) {
+                recipe.clicks += 1
+            }
         })
 
         localStorage.clear()
@@ -427,7 +439,10 @@ function loadPage(recipeRepository, user, ingredientsData) {
 
     function genClickRepo() {
         clickRepo = recipeRepository.recipes.map(recipe => {
-            return { name: [recipe.name], clicks: 0 }
+            return {
+                name: [recipe.name],
+                clicks: 0
+            }
         })
         localStorage.setItem('clicks', JSON.stringify(clickRepo))
         displayAdmin()

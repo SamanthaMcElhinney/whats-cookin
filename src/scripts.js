@@ -226,7 +226,7 @@ function loadPage(recipeRepository, user, ingredientsData) {
             user.addToSavedRecipes(currentRecipe)
             button.innerText = 'Saved'
             button.style.backgroundColor = "red"
-        fetch('http://localhost:3001/api/v1/usersRecipesd', {
+        fetch('http://localhost:3001/api/v1/usersRecipes', {
             method: 'POST',
             body: JSON.stringify({ userID: user.id, recipeID: currentRecipe.id}),
             headers: {

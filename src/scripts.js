@@ -310,14 +310,15 @@ function loadPage(recipeRepository, user, ingredientsData) {
 
         var clicks = localStorage.getItem('clicks')
         var click = JSON.parse(clicks)
-        console.log(click)
+        click.sort((a, b)=> {
+           return b.clicks - a.clicks
+        })
         click.forEach(clickCount=> {
             adminList.innerHTML += `<li>${clickCount.name} has ${clickCount.clicks} click(s)</li>`
         })
 
         const clearButton = document.querySelector('#clear-button')
         clearButton.addEventListener('click', genClickRepo)
-
         }
     }
 
@@ -428,7 +429,6 @@ function loadPage(recipeRepository, user, ingredientsData) {
         clickRepo = recipeRepository.recipes.map(recipe => {
             return { name: [recipe.name], clicks: 0 }
         })
-        
         localStorage.setItem('clicks', JSON.stringify(clickRepo))
         displayAdmin()
     }

@@ -45,11 +45,11 @@ function loadPage(recipeRepository, user, ingredientsData) {
     const mainDishButton = document.querySelector("#main-dish-filter")
     const compDishButton = document.querySelector("#complimentary-dish-filter")
     const searchBar = document.querySelector("#search-bar")
-    const searchGo = document.querySelector("#search-button")
     const adminCenter = document.querySelector("#admin-center")
     const recipeModal = document.querySelector('#modal')
     const recipesHeader = document.querySelector('#recipes-header')
     const recipeContainer = document.querySelector('#recipe-container')
+    const searchForm = document.querySelector('#search-form')
 
     var clickRepo
     let currentRecipe 
@@ -100,16 +100,16 @@ function loadPage(recipeRepository, user, ingredientsData) {
         renderPage()
     })
 
-    searchGo.addEventListener('click', () => {
+    searchForm.addEventListener('submit', (event) => {
+        event.preventDefault()
         if (searchBar.value) {
             filterTerm = searchBar.value
-            renderPage()
-            searchBar.value = ''
-            
         }
-        if (currentView === 'admin' || 'landing') {
+        if (currentView === 'admin' || currentView ==='landing') {
             currentView = 'recipes'
         }
+        renderPage()
+        searchBar.value = ''
     })
 
     adminCenter.addEventListener('click', () => {

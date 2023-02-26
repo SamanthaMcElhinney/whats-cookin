@@ -239,7 +239,7 @@ function loadPage(recipeRepository, user, ingredientsData) {
             }
             return response.json()
            })
-           .catch(error => alert(error))
+           .catch(error => alert('Error, unable to find the saved recipes API'))
         } else {
         fetch('http://localhost:3001/api/v1/usersRecipes', {
             method: 'DELETE',
@@ -254,7 +254,7 @@ function loadPage(recipeRepository, user, ingredientsData) {
             }
             return response.json()
            })
-           .catch(error => alert(error))
+           .catch(error => alert('Error, unable to locate the users recipes API'))
         
             user.removeFromSavedRecipes(currentRecipe)
             button.innerText = '♥️'
@@ -279,9 +279,18 @@ function loadPage(recipeRepository, user, ingredientsData) {
         login.addEventListener('click', () => {
             username = document.querySelector('.user').value
             password = document.querySelector('.password').value
-            if(checkLogin(username, password)) {loggedIn = true}
-            else{loggedIn = false}
-            displayAdmin()
+            console.log(username)
+            if(checkLogin(username, password)) {
+                loggedIn = true 
+                displayAdmin()
+            }
+            else{
+                loggedIn = false
+                adminSection.innerHTML += `<h1>Incorrect Username or Password</h1>`
+                setTimeout(() => {
+                    displayAdmin()
+                  }, "1500")
+            }
         }) 
         }
 
@@ -378,13 +387,26 @@ function loadPage(recipeRepository, user, ingredientsData) {
               getCurrentDisplayedRecipes(user.recipesToCook, filterTerm)
             );
         } else if (currentView === 'landing') {
-            const num1 = Math.floor(Math.random() * recipeRepository.recipes.length)
-            const num2 = Math.floor(Math.random() * recipeRepository.recipes.length)
-            const num3 = Math.floor(Math.random() * recipeRepository.recipes.length)
-            let fakePopularRecipes = [recipeRepository.recipes[num1], recipeRepository.recipes[num2], recipeRepository.recipes[num3]]
-            displayRecipes(fakePopularRecipes)
+            var popularRecipes = genPopularRecipes()
+            displayRecipes(popularRecipes)
         }
     }
+
+    function genPopularRecipes() {
+        const num1 = Math.floor(Math.random() * recipeRepository.recipes.length)
+        const num2 = Math.floor(Math.random() * recipeRepository.recipes.length)
+        const num3 = Math.floor(Math.random() * recipeRepository.recipes.length)
+
+        let popularRecipes = [recipeRepository.recipes[num1], recipeRepository.recipes[num2], recipeRepository.recipes[num3]]
+
+        if((new Set(popularRecipes)).size !== popularRecipes.length) {
+            genPopularRecipes()
+        } else {
+            return popularRecipes
+        }
+
+    }
+
 
     function checkLogin(username, password) {
         if(username === "admin" && password === "password"){ return true }
@@ -408,5 +430,6 @@ function loadPage(recipeRepository, user, ingredientsData) {
         })
         
         localStorage.setItem('clicks', JSON.stringify(clickRepo))
+        displayAdmin()
     }
 }

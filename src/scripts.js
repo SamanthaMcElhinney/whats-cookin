@@ -6,6 +6,8 @@ import User from './classes/User.js'
 import Recipe from './classes/Recipe'
 MicroModal.init()
 
+
+//----------------------------------FETCH REQUESTS-----------------------------------
 const usersDataFetch = fetch(
     "http://localhost:3001/api/v1/users"
 ).then((response) => response.json())
@@ -35,67 +37,67 @@ Promise.all([usersDataFetch, ingredientsDataFetch, recipesDataFetch])
     )
 
 function loadPage(recipeRepository, user, ingredientsData) {
+
+    // -------------------------------DOM ELEMENTS-------------------------------
     const recipeSection = document.querySelector('#recipe-section')
     const adminSection = document.querySelector(".admin-section")
-    const savedRecipes = document.querySelector("#saved-recipes")
-    const topButton = document.querySelector("#top-button")
+    const savedRecipesButton = document.querySelector("#saved-recipes")
+    const returnToTopButton = document.querySelector("#top-button")
     const allRecipesButton = document.querySelector("#recipe-button")
     const breakfastButton = document.querySelector("#breakfast-filter")
     const snacksAppButton = document.querySelector("#snack-appetizers-filter")
     const mainDishButton = document.querySelector("#main-dish-filter")
     const compDishButton = document.querySelector("#complimentary-dish-filter")
     const searchBar = document.querySelector("#search-bar")
-    const adminCenter = document.querySelector("#admin-center")
+    const adminButton = document.querySelector("#admin-center")
     const recipeModal = document.querySelector('#modal')
-    const recipesHeader = document.querySelector('#recipes-header')
+    const recipeSectionHeader = document.querySelector('#recipes-header')
     const recipeContainer = document.querySelector('#recipe-container')
     const searchForm = document.querySelector('#search-form')
 
-    var clickRepo
     let currentRecipe
-    var loggedIn = false
+    let loggedIn = false
     let currentView = 'landing'
     let filterTerm = ''
-    var username
-    var password
 
     renderPage()
 
     if (localStorage.length < 1) {
-        genClickRepo()
+        generateClickInfoObjects()
     }
 
-    topButton.addEventListener('click', () => document.documentElement.scrollTop = 0)
+    // --------------------------------EVENT LISTENERS----------------------------------------
+    returnToTopButton.addEventListener('click', () => document.documentElement.scrollTop = 0)
     allRecipesButton.addEventListener('click', () => {
         currentView = 'recipes'
         filterTerm = ''
-        recipesHeader.innerText = 'All Recipes'
         renderPage()
-
     })
-    savedRecipes.addEventListener('click', () => {
+
+    savedRecipesButton.addEventListener('click', () => {
         currentView = 'savedRecipes'
         filterTerm = ''
         renderPage()
     })
+
     breakfastButton.addEventListener('click', () => {
         currentView = 'recipes'
         filterTerm = ['breakfast', 'morning meal']
         renderPage()
-
     })
+
     snacksAppButton.addEventListener('click', () => {
         currentView = "recipes"
         filterTerm = ['dip', 'snack', 'appetizer']
         renderPage()
-
     })
+
     mainDishButton.addEventListener('click', () => {
         currentView = "recipes"
         filterTerm = ['main dish', 'dinner', 'lunch']
         renderPage()
-
     })
+
     compDishButton.addEventListener('click', () => {
         currentView = "recipes"
         filterTerm = ['antipasti', 'hor d\'oeuvre', 'starter', 'salad', 'side dish', 'appetizer', 'condiment', 'spread']
@@ -114,7 +116,7 @@ function loadPage(recipeRepository, user, ingredientsData) {
         searchBar.value = ''
     })
 
-    adminCenter.addEventListener('click', () => {
+    adminButton.addEventListener('click', () => {
         currentView = 'admin'
         filterTerm = ''
         renderPage()
@@ -127,12 +129,13 @@ function loadPage(recipeRepository, user, ingredientsData) {
 
     window.onscroll = () => {
         if (document.documentElement.scrollTop > 350) {
-            topButton.style.display = "block"
+            returnToTopButton.style.display = "block"
         } else {
-            topButton.style.display = "none"
+            returnToTopButton.style.display = "none"
         }
     }
 
+    //-------------------------------------------FUNCTIONS--------------------------------------------
     function assignCurrentRecipe(event) {
         let currentRecipeId
         if (event.target.dataset.allRecipes) {
@@ -145,82 +148,7 @@ function loadPage(recipeRepository, user, ingredientsData) {
         }
         currentRecipeId = parseInt(currentRecipeId)
         currentRecipe = recipeRepository.recipes.find(recipe => recipe.id === currentRecipeId)
-        currentRecipe = new Recipe(currentRecipe)
-        updateRecipeCount()
         updateClickCount()
-    }
-
-    function updateRecipeCount() {
-        currentRecipe.clicks += 1
-    }
-
-    function renderCurrentRecipe() {
-
-        if (!currentRecipe) {
-            return
-        }
-        let isSaved
-        recipeModal.innerHTML = ''
-        let ingredients = currentRecipe.determineRecipeIngredients(ingredientsData)
-
-        const ingredientsHTML = ingredients.map(ingredient => {
-            return '<li>' + ingredient.ingredient + '</li>'
-        }).join('')
-
-        if (user.recipesToCook && user.recipesToCook.recipes.filter(current => current.id === currentRecipe.id).length !== 0) {
-            isSaved = "Saved"
-        } else {
-            isSaved = "♥️"
-        }
-
-        const instructionsHTML = currentRecipe
-            .returnInstructions()
-            .map((instruction) => {
-                return "<li>" + instruction + "</li>"
-            })
-            .join("")
-        recipeModal.innerHTML = `
-        <header class="modal__header">
-          <h2 class="modal__title" id="modal-1-title">
-            ${currentRecipe.name}
-          </h2>
-        </header>
-        <main class="modal__content" id="modal-1-content">
-          <div class="modal_container_img_ingredients"> 
-          <img class="modal_img" src="${currentRecipe.image}" alt='${currentRecipe.name}'>
-          <div class="modal_ingredients_container">
-            <h3 class="modal_ingredients">Ingredients</h3>
-            <ul>
-                ${ingredientsHTML}
-             </ul>
-          </div>
-          </div>
-            <h3 class="modal_recipe_instructions">Recipe Instructions</h3>
-          <ol type="1">
-            ${instructionsHTML}
-          </ol>
-          <h4 class="modal_cost">Recipe Cost:$${currentRecipe.calculateRecipeCost(
-            ingredientsData
-          )}</h4>
-          <div class="modal_button_container">
-          <button type="button" class="modal__btn">${isSaved}</button>
-          <button class="modal__close" id="close" aria-label="Close modal" data-micromodal-close>CLOSE</button>
-          </div>
-        </main>
-        `
-        MicroModal.show('modal-1')
-        const saveButton = document.querySelector('.modal__btn')
-        const closeButton = document.querySelector('#close')
-        if (
-            user.recipesToCook.recipes.find(
-                (current) => current.id === currentRecipe.id
-            )
-        ) {
-            saveButton.style.backgroundColor = "red"
-        }
-        saveButton.addEventListener('click', () => saveRecipe(saveButton))
-        closeButton.addEventListener('click', () => currentRecipe = '')
-        recipeModal.scrollTo(0, 0)
     }
 
     function saveRecipe(button) {
@@ -275,20 +203,20 @@ function loadPage(recipeRepository, user, ingredientsData) {
         adminSection.innerHTML = ''
         if (!loggedIn) {
             adminSection.innerHTML +=
-                `
-        <label>Username : </label>   
-            <input id="login-style" class="user" type="text" placeholder="Enter Username" name="username" required>  
-            <label>Password : </label>   
-            <input id="login-style" class="password" type="password" placeholder="Enter Password" name="password" required>  
-        <button class="login-button" type="submit">Login</button>
-        `
+            `<form id='login-form'>
+                <label for="login-user">Username: </label>   
+                <input id="login-user" type="text" placeholder="Enter Username" name="username" required>  
+                <label for="login-password">Password: </label>   
+                <input id="login-password" type="password" placeholder="Enter Password" name="password" required>  
+                <button type="submit">Login</button>
+            </form>`
 
-            var login = document.querySelector('.login-button')
-            login.addEventListener('click', () => {
-                username = document.querySelector('.user').value
-                password = document.querySelector('.password').value
-                console.log(username)
-                if (checkLogin(username, password)) {
+            const loginForm = document.querySelector('#login-form')
+            loginForm.addEventListener('submit', (event) => {
+                event.preventDefault()
+                const username = document.querySelector('#login-user').value
+                const password = document.querySelector('#login-password').value
+                if (authenticateUser(username, password)) {
                     loggedIn = true
                     displayAdmin()
                 } else {
@@ -299,24 +227,20 @@ function loadPage(recipeRepository, user, ingredientsData) {
                     }, "1500")
                 }
             })
-        }
-
-        if (loggedIn) {
+        } else {
             adminSection.innerHTML +=
-                `
-        <button id="clear-button">Clear Clicks</button>
-        <div class="admin">
-          <h2 class="admin-title">Hi Admin</h2>
-          <h3 class="admin-subtitle"> Welcome to the Admin Center </h3>
-        </div>
-        <div class ='scroll-admin-section'>
-            <ul class='admin-list'></ul>
-        </div>
-        `
-            var adminList = document.querySelector('.admin-list')
+            `<button id="clear-button">Clear Clicks</button>
+            <div class="admin">
+                <h2 class="admin-title">Hi Admin</h2>
+                <h3 class="admin-subtitle"> Welcome to the Admin Center </h3>
+            </div>
+            <div class ='scroll-admin-section'>
+                <ul class='admin-list'></ul>
+            </div>`
 
-            var clicks = localStorage.getItem('clicks')
-            var click = JSON.parse(clicks)
+            const adminList = document.querySelector('.admin-list')
+            const clicks = localStorage.getItem('clicks')
+            const click = JSON.parse(clicks)
             click.sort((a, b) => {
                 return b.clicks - a.clicks
             })
@@ -325,39 +249,7 @@ function loadPage(recipeRepository, user, ingredientsData) {
             })
 
             const clearButton = document.querySelector('#clear-button')
-            clearButton.addEventListener('click', genClickRepo)
-        }
-    }
-
-    function displayRecipes(recipes) {
-        if (!recipes) {
-            recipeContainer.innerHTML = ''
-            recipesHeader.innerHTML = `<p>NO RESULTS</p>`
-            return
-        }
-        if (currentView === 'landing') {
-            recipeContainer.innerHTML = ''
-            recipesHeader.innerText = 'Popular Recipes'
-            recipes.forEach(recipe => {
-                recipeContainer.innerHTML +=
-                    `
-            <section class='popular-recipe' data-all-recipes='${recipe.id}'>
-            <h3 id='${recipe.id}' class='small-recipe-text'>${recipe.name}</h3>
-            <img src="${recipe.image}" alt="${recipe.name}" class="recipe-img">
-            </section>
-            `
-            })
-        } else {
-            recipeContainer.innerHTML = ''
-            recipes.forEach(recipe => {
-                recipeContainer.innerHTML +=
-                    `
-            <section class='recipe' data-all-recipes='${recipe.id}'>
-            <h3 id='${recipe.id}' class='small-recipe-text'>${recipe.name}</h3>
-            <img src="${recipe.image}" alt="${recipe.name}" class="recipe-img">
-            </section>
-            `
-            })
+            clearButton.addEventListener('click', generateClickInfoObjects)
         }
     }
 
@@ -377,18 +269,19 @@ function loadPage(recipeRepository, user, ingredientsData) {
             adminSection.classList.remove('hidden')
             displayAdmin(user, ingredientsData)
         } else if (currentView === 'recipes') {
+            recipeSectionHeader.innerText = 'All Recipes'
             searchBar.placeholder = "search all recipes..."
             if (!filterTerm) {
-                recipesHeader.innerText = 'All Recipes'
+                recipeSectionHeader.innerText = 'All Recipes'
             } else {
-                recipesHeader.innerText = ''
+                recipeSectionHeader.innerText = ''
             }
             adminSection.classList.add('hidden')
             recipeSection.classList.remove('hidden')
             displayRecipes(getCurrentDisplayedRecipes(recipeRepository, filterTerm))
         } else if (currentView === 'savedRecipes') {
             searchBar.placeholder = 'search saved recipes...'
-            recipesHeader.innerText = 'Saved Recipes'
+            recipeSectionHeader.innerText = 'Saved Recipes'
             adminSection.classList.add('hidden')
             recipeSection.classList.remove('hidden')
             displayRecipes(
@@ -412,11 +305,9 @@ function loadPage(recipeRepository, user, ingredientsData) {
         } else {
             return popularRecipes
         }
-
     }
 
-
-    function checkLogin(username, password) {
+    function authenticateUser(username, password) {
         if (username === "admin" && password === "password") {
             return true
         } else {
@@ -425,26 +316,125 @@ function loadPage(recipeRepository, user, ingredientsData) {
     }
 
     function updateClickCount() {
-        clickRepo = localStorage.getItem('clicks')
-        var par = JSON.parse(clickRepo)
-        par.forEach(recipe => {
-            if (recipe.name[0] === currentRecipe.name) {
+        const recipeClicks = localStorage.getItem('clicks')
+        const parsedClickInfo = JSON.parse(recipeClicks)
+       parsedClickInfo.forEach(recipe => {
+            if (recipe.name === currentRecipe.name) {
                 recipe.clicks += 1
             }
         })
-
-        localStorage.clear()
-        localStorage.setItem('clicks', JSON.stringify(par))
+        localStorage.setItem('clicks', JSON.stringify(parsedClickInfo))
     }
 
-    function genClickRepo() {
-        clickRepo = recipeRepository.recipes.map(recipe => {
+    function generateClickInfoObjects() {
+        const recipeClicks = recipeRepository.recipes.map(recipe => {
             return {
-                name: [recipe.name],
+                name: recipe.name,
                 clicks: 0
             }
         })
-        localStorage.setItem('clicks', JSON.stringify(clickRepo))
+        localStorage.setItem('clicks', JSON.stringify(recipeClicks))
         displayAdmin()
+    }
+
+    function displayRecipes(recipes) {
+        if (!recipes) {
+            recipeContainer.innerHTML = ''
+            recipeSectionHeader.innerHTML = `<p>NO RESULTS</p>`
+            return
+        }
+        if (currentView === 'landing') {
+            recipeContainer.innerHTML = ''
+            recipeSectionHeader.innerText = 'Popular Recipes'
+            recipes.forEach(recipe => {
+                recipeContainer.innerHTML +=
+                    `
+            <section class='popular-recipe' data-all-recipes='${recipe.id}'>
+            <h3 id='${recipe.id}' class='small-recipe-text'>${recipe.name}</h3>
+            <img src="${recipe.image}" alt="${recipe.name}" class="recipe-img">
+            </section>
+            `
+            })
+        } else {
+            recipeContainer.innerHTML = ''
+            recipes.forEach(recipe => {
+                recipeContainer.innerHTML +=
+                    `
+            <section class='recipe' data-all-recipes='${recipe.id}'>
+            <h3 id='${recipe.id}' class='small-recipe-text'>${recipe.name}</h3>
+            <img src="${recipe.image}" alt="${recipe.name}" class="recipe-img">
+            </section>
+            `
+            })
+        }
+    }
+
+    function renderCurrentRecipe() {
+
+        if (!currentRecipe) {
+            return
+        }
+        let isSaved
+        recipeModal.innerHTML = ''
+        let ingredients = currentRecipe.determineRecipeIngredients(ingredientsData)
+
+        const ingredientsHTML = ingredients.map(ingredient => {
+            return '<li>' + ingredient.ingredient + '</li>'
+        }).join('')
+
+        if (user.recipesToCook && user.recipesToCook.recipes.filter(current => current.id === currentRecipe.id).length !== 0) {
+            isSaved = "Saved"
+        } else {
+            isSaved = "♥️"
+        }
+
+        const instructionsHTML = currentRecipe
+            .returnInstructions()
+            .map((instruction) => {
+                return "<li>" + instruction + "</li>"
+            })
+            .join("")
+        recipeModal.innerHTML = `
+    <header class="modal__header">
+      <h2 class="modal__title" id="modal-1-title">
+        ${currentRecipe.name}
+      </h2>
+    </header>
+    <main class="modal__content" id="modal-1-content">
+      <div class="modal_container_img_ingredients"> 
+      <img class="modal_img" src="${currentRecipe.image}" alt='${currentRecipe.name}'>
+      <div class="modal_ingredients_container">
+        <h3 class="modal_ingredients">Ingredients</h3>
+        <ul>
+            ${ingredientsHTML}
+         </ul>
+      </div>
+      </div>
+        <h3 class="modal_recipe_instructions">Recipe Instructions</h3>
+      <ol type="1">
+        ${instructionsHTML}
+      </ol>
+      <h4 class="modal_cost">Recipe Cost:$${currentRecipe.calculateRecipeCost(
+        ingredientsData
+      )}</h4>
+      <div class="modal_button_container">
+      <button type="button" class="modal__btn">${isSaved}</button>
+      <button class="modal__close" id="close" aria-label="Close modal" data-micromodal-close>CLOSE</button>
+      </div>
+    </main>
+    `
+        MicroModal.show('modal-1')
+        const saveButton = document.querySelector('.modal__btn')
+        const closeButton = document.querySelector('#close')
+        if (
+            user.recipesToCook.recipes.find(
+                (current) => current.id === currentRecipe.id
+            )
+        ) {
+            saveButton.style.backgroundColor = "red"
+        }
+        saveButton.addEventListener('click', () => saveRecipe(saveButton))
+        closeButton.addEventListener('click', () => currentRecipe = '')
+        recipeModal.scrollTo(0, 0)
     }
 }

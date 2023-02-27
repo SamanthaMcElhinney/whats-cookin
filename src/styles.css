@@ -202,7 +202,7 @@ button:active {
   height: 100%;
 }
 
-.login-button {   
+#login-form button {   
   background-color: var(--background-color);   
   width: 5%;    
   margin: 10px 0px;   
@@ -210,7 +210,7 @@ button:active {
   cursor: pointer;   
 }   
 
-#login-style {
+#login-form input {
   margin-top: 20vh;
   font-family: inherit;
   width: 25%;

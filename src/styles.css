@@ -155,7 +155,7 @@ button:active {
 }
 
 .recipe-section {
-  margin: 20px;
+  margin: 90px;
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
@@ -163,7 +163,6 @@ button:active {
   width: 100vw;
   min-width: 400px;
 }
-
 
 .search-container {
   align-items: flex-end;
@@ -363,6 +362,7 @@ button:active {
 .modal_img {
   display: flex;
   align-items: flex-start;
+  border-radius: 20px;
 }
 
 .modal_ingredients_container {
@@ -380,7 +380,7 @@ button:active {
 }
 
 .modal__close {
-  background-color: #e6e6e6;
+  background-color: var(--body-background-color);
   color: rgba(0, 0, 0, .8);
   float: right;
   margin-right: 10px;
@@ -414,7 +414,7 @@ button:active {
 .modal__btn {
   margin-right: 20px;
   font-size: .875rem;
-  background-color: white;
+  background-color: var(--body-background-color);
   color: rgba(0, 0, 0, .8);
   border-radius: .25rem;
   border-style: none;
@@ -429,12 +429,11 @@ button:active {
   transform: translateZ(0);
 }
 
-.modal__btn:focus,
+.modal__close:hover,
 .modal__btn:hover {
   -webkit-transform: scale(1.05);
   transform: scale(1.05);
 }
-
 
 .hidden {
   display: none;
@@ -527,6 +526,11 @@ button:active {
   cursor: pointer;
 }
 
+.popular-recipe:hover {
+  transform: scale(1.04);
+  box-shadow: 0 0 10px rgb(0 0 0 / 0.5)
+}
+
 .popular-recipe>img {
   height: 250px;
   width: auto;
@@ -546,8 +550,8 @@ button:active {
 }
 
 #recipes-header {
-  margin-right: 275px;
-  margin-bottom: 30px;
+  display: flex;
+  justify-content: center;
   color: var(--background-color);
 }
 

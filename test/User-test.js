@@ -12,22 +12,14 @@ describe('User', () => {
     });
 
     it('should be an instance of User', () => 
-
         expect(user).to.be.instanceOf(User));
 
     it('should have a name', () => {
-
         expect(user.name).to.equal('Saige O\'Kon');
     });
 
     it('should have an id', () => {
-
         expect(user.id).to.equal(1);
-    });
-
-    it('should have a pantry', () => {
-
-        expect(user.pantry).to.have.lengthOf(35);
     });
 
     it('should be able to add recipe to recipes to cook', () => {

@@ -11,10 +11,6 @@ class Recipe {
     this.clicks = 0;
   }
 
-  updateRecipeCount() {
-    this.clicks += 1;
-  }
-
   getIngredientIds() {
     let ingredientIds = this.ingredients.map((ingredient) => ingredient.id);
     return ingredientIds;

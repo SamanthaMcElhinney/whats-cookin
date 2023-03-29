@@ -32,13 +32,13 @@ let ingredientsData
 
 //----------------------------------FETCH REQUESTS-----------------------------------
 const usersDataFetch = fetch(
-    "http://localhost:3001/api/v1/users"
+    "https://whats-cookin-api.vercel.app/api/v1/users"
 ).then((response) => response.json())
 const ingredientsDataFetch = fetch(
-    "http://localhost:3001/api/v1/ingredients"
+    "https://whats-cookin-api.vercel.app/api/v1/ingredients"
 ).then((response) => response.json())
 const recipesDataFetch = fetch(
-    "http://localhost:3001/api/v1/recipes"
+    "https://whats-cookin-api.vercel.app/api/v1/recipes"
 ).then((response) => response.json())
 
 Promise.all([usersDataFetch, ingredientsDataFetch, recipesDataFetch])
@@ -153,7 +153,7 @@ function saveRecipe(button) {
         user.addToSavedRecipes(currentRecipe)
         button.innerText = 'Saved'
         button.style.backgroundColor = "red"
-        fetch('http://localhost:3001/api/v1/usersRecipes', {
+        fetch('https://whats-cookin-api.vercel.app/api/v1/usersRecipes', {
                 method: 'POST',
                 body: JSON.stringify({
                     userID: user.id,
@@ -171,7 +171,7 @@ function saveRecipe(button) {
             })
             .catch(error => alert('Error, unable to find the saved recipes API'))
     } else {
-        fetch('http://localhost:3001/api/v1/usersRecipes', {
+        fetch('https://whats-cookin-api.vercel.app/api/v1/usersRecipes', {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json'

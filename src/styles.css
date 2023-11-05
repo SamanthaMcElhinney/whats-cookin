@@ -1,9 +1,9 @@
 :root {
-  --body-background-color: #F2DEBA;
-  --background-color: #4E6C50;
-  --text-color: #FAECD6;
-  --highlight-color: #1C6758;
-  --border-color: #FAECD6;
+  --body-background-color: #C0A9BD;
+  --background-color:  #F4F2F3;
+  --text-color: #64766A;
+  --highlight-color: #64766A;
+  --border-color:  #C0A9BD;
 }
 
 * {
@@ -13,7 +13,7 @@
 }
 
 body {
-  background-color: #F2DEBA;
+  background-color:   #C0A9BD;
   padding: 20px;
   width: 100%;
 }
@@ -48,6 +48,12 @@ body {
   justify-content: space-between;
   margin-left: 25px;
 }
+
+.nav-left-container {
+  display: flex;
+  flex-direction: row-reverse;
+}
+
 
 .title {
   overflow: hidden;

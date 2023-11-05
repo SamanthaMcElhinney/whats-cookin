@@ -10,10 +10,12 @@ class RecipeRepository {
       this.recipes.push(new Recipe(recipeToAdd));
     }
   }
+  
   removeRecipe(recipeId) {
     this.recipes = this.recipes.filter(recipe => recipeId !== recipe.id);
 
   }
+  
   filterByTag(tag) {
     if (Array.isArray(tag)) {
       this.filteredRecipes = [];

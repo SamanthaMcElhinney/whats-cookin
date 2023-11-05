@@ -1,9 +1,10 @@
 import './styles.css'
 import './images/turing-logo.png'
-import MicroModal from 'micromodal'
-import RecipeRepository from './classes/RecipeRepository'
-import User from './classes/User.js'
+import MicroModal from 'micromodal' //imports micromodal
+import RecipeRepository from './classes/RecipeRepository' //imports repo class
+import User from './classes/User.js' //imports user class
 MicroModal.init()
+import './images/egg.jpg'
 
 // -------------------------------DOM ELEMENTS-------------------------------
 const recipeSection = document.querySelector('#recipe-section')
@@ -22,6 +23,7 @@ const recipeSectionHeader = document.querySelector('#recipes-header')
 const recipeContainer = document.querySelector('#recipe-container')
 const searchForm = document.querySelector('#search-form')
 
+//global vars
 let currentRecipe
 let loggedIn = false
 let currentView = 'landing'
@@ -31,31 +33,34 @@ let recipeRepository
 let ingredientsData
 
 //----------------------------------FETCH REQUESTS-----------------------------------
-const usersDataFetch = fetch(
-    "http://localhost:3001/api/v1/users"
-).then((response) => response.json())
-const ingredientsDataFetch = fetch(
-    "http://localhost:3001/api/v1/ingredients"
-).then((response) => response.json())
-const recipesDataFetch = fetch(
-    "http://localhost:3001/api/v1/recipes"
-).then((response) => response.json())
+const baseUrl = "https://sam-whats-cookin-79d3e07ba262.herokuapp.com";
 
+const usersDataFetch = fetch(`${baseUrl}/api/v1/users`).then((response) =>
+  response.json()
+);
+
+const ingredientsDataFetch = fetch(`${baseUrl}/api/v1/ingredients`).then(
+  (response) => response.json()
+);
+
+const recipesDataFetch = fetch(`${baseUrl}/api/v1/recipes`).then((response) =>
+  response.json()
+);
 Promise.all([usersDataFetch, ingredientsDataFetch, recipesDataFetch])
     .then((data) => {
         let allCookingData = {
             users: data[0].users,
             ingredients: data[1].ingredients,
             recipes: data[2].recipes
-        }
+        } 
         return allCookingData
     })
     .then(
         (allCookingData) => {
-            recipeRepository = new RecipeRepository(allCookingData.recipes)
-            user = new User(allCookingData.users[10])
-            user.recipesToCook = user.changeIdToRecipe(recipeRepository)
-            ingredientsData = allCookingData.ingredients
+            recipeRepository = new RecipeRepository(allCookingData.recipes) 
+            user = new User(allCookingData.users[10]) 
+            user.recipesToCook = user.changeIdToRecipe(recipeRepository) 
+            ingredientsData = allCookingData.ingredients 
             renderPage()
             if (localStorage.length < 1) {
                 generateClickInfoObjects()
@@ -152,8 +157,8 @@ function saveRecipe(button) {
     if (button.innerText === '♥️') {
         user.addToSavedRecipes(currentRecipe)
         button.innerText = 'Saved'
-        button.style.backgroundColor = "red"
-        fetch('http://localhost:3001/api/v1/usersRecipes', {
+        button.style.backgroundColor = "#fdc061";
+        fetch(`${baseUrl}/api/v1/usersRecipes`, {
                 method: 'POST',
                 body: JSON.stringify({
                     userID: user.id,
@@ -171,7 +176,7 @@ function saveRecipe(button) {
             })
             .catch(error => alert('Error, unable to find the saved recipes API'))
     } else {
-        fetch('http://localhost:3001/api/v1/usersRecipes', {
+        fetch(`${baseUrl}/api/v1/usersRecipes`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json'
@@ -188,10 +193,9 @@ function saveRecipe(button) {
                 return response.json()
             })
             .catch(error => alert('Error, unable to locate the users recipes API'))
-
         user.removeFromSavedRecipes(currentRecipe)
         button.innerText = '♥️'
-        button.style.backgroundColor = "#e6e6e6"
+        button.style.backgroundColor = "#fdc061";
         renderPage()
     }
 }
@@ -207,7 +211,6 @@ function displayAdmin() {
                 <input id="login-password" type="password" placeholder="Enter Password" name="password" required>  
                 <button type="submit">Login</button>
             </form>`
-
         const loginForm = document.querySelector('#login-form')
         loginForm.addEventListener('submit', (event) => {
             event.preventDefault()
@@ -244,7 +247,6 @@ function displayAdmin() {
         click.forEach(clickCount => {
             adminList.innerHTML += `<li>${clickCount.name} has ${clickCount.clicks} click(s)</li>`
         })
-
         const clearButton = document.querySelector('#clear-button')
         clearButton.addEventListener('click', generateClickInfoObjects)
     }
@@ -313,9 +315,11 @@ function authenticateUser(username, password) {
 }
 
 function updateClickCount() {
+
     const recipeClicks = localStorage.getItem('clicks')
     const parsedClickInfo = JSON.parse(recipeClicks)
     parsedClickInfo.forEach(recipe => {
+recipe.clicks += 1
         if (recipe.name === currentRecipe.name) {
             recipe.clicks += 1
         }

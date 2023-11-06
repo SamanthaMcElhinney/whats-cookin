@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Whats Cookin</title>
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+</head>
+<body>
+  <button id="top-button">Back to Top</button>
+  <header class="main-header">
+    <div class="nav-left-container">
+      <h1 class="title">What's cookin</h1>
+      <img class="logo" src="./images/egg.jpg" alt="chef">
+    </div>
+    <div class="search-container">
+      <form class="search" id="search-form" role="search">
+        <input type="search" aria-label='search recipes' required='true' maxlength="24" class="search-bar" placeholder="search all recipes..." id="search-bar">
+        <button class="search-button" value='search-button' id="search-button" type="submit" aria-label="Search"> 
+          <i class="fa fa-search" aria-hidden="true"></i>
+        </button>
+      </form>
+    </div>
+  </header>
+  <section class="main-elements">
+    <nav class="navigation-section">
+      <section class="buttons">
+        <button id="recipe-button">All Recipes</button>
+        <button id="saved-recipes">Saved Recipes</button>
+        <button id="breakfast-filter">Breakfast</button>
+        <button id="snack-appetizers-filter">Appetizers</button>
+        <button id="main-dish-filter">Main Dishes</button>
+        <button id="complimentary-dish-filter">Side Dishes</button>
+        <button id="admin-center">Admin Center</button>
+      </section>
+    </nav>
+    <section class="recipe-section" id="recipe-section">
+      <h2 id="recipes-header"></h2>
+      <div id="recipe-container"></div>
+    </section>
+    <section class="admin-section hidden">
+      <div id='admin-items-container'>
+      </div>
+    </section>
+  </section>
+</body>
+<div class="modal micromodal-slide" id="modal-1" aria-hidden="true">
+  <div class="modal__overlay" tabindex="-1">
+    <div class="modal__container" role="dialog" aria-modal="true" aria-labelledby="modal-1-title">
+      <div id="modal">
+        <p id='modal-1-title'></p>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="bundle.js"></script>
+</html>
